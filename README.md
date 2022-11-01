@@ -1,7 +1,12 @@
 # Virtual-MES
 An Emulator of the Menga Entertainment System.
 
-## Provided functions:
+MES drivers (such as controller.h or gpu.h) and the CPU code are written in C, which means it
+is up to the game developer to decide whether they code their game in C or C++. Since VMES
+under the hood uses SDL2 for graphics and chrono for timing, a C++ compiler is still required.
+Nonetheless, software in C can be tested using VMES just fine.
+
+## Drivers:
 
 ### Controller:
 * `get_button_by_contorller_and_index`
@@ -21,18 +26,7 @@ An Emulator of the Menga Entertainment System.
 * [TODO] `send_rectangle`
 * [TODO] `swap_buffers`
 
-### Time:
+### Timer:
 
-Get the current point in time:
-* `mestime::Clock::now() -> mestime::Moment`
-
-Calculate duration between points in time:
-* `mestime::Duration::Duration()`
-* `mestime::Duration::Duration(mestime::Moment, mestime::Moment)`
-* `mestime::Duration::set(mestime::Moment, mestime::Moment)`
-
-
-* `mestime::Duration::nanoseconds() -> uint64_t`
-* `mestime::Duration::microseconds() -> uint64_t`
-* `mestime::Duration::milliseconds() -> uint64_t`
-* `mestime::Duration::seconds() -> uint64_t`
+* `time_ms`
+* `sleep_ms`

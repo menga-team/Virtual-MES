@@ -6,10 +6,11 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-#include "gpu.h"
-#include "controller.h"
-#include "engine.h"
+#include "drivers/gpu.h"
+#include "drivers/controller.h"
+#include "drivers/timer.h"
 
+void update();
 
 int main(){
     // event handling
@@ -19,29 +20,27 @@ int main(){
     // init SDL
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_TIF);
-    // hints
+
+    // SDL hints
     SDL_SetHint(SDL_HINT_RENDER_VSYNC, "0");
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
 
-    // window and renderer
+    // SDL window and renderer
     SDL_Window* window = SDL_CreateWindow("Virtual-MES",SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
     SDL_Surface* gamesurf = IMG_Load("../peppers.tiff");
     SDL_Texture* gametex = SDL_CreateTextureFromSurface(renderer, gamesurf);
 
+    // init timer
+    _timer_start();
+
     // game loop
     while (!quit) {
-
-        // fps display
-        std::stringstream ss;
-        ss <<" deltatime: " << deltatime.microseconds();
-        SDL_SetWindowTitle(window, ss.str().c_str());
 
         // clear buffer
         SDL_SetRenderDrawColor(renderer, BACKGROUND_COLOR);
         SDL_RenderClear(renderer);
-
 
         // event handling
         while (SDL_PollEvent(&event)) {

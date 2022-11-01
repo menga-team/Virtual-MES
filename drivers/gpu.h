@@ -14,5 +14,4 @@ void swap_buffers() {
 
 }
 
-
 #endif //VMES_GPU_H
