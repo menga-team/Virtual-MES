@@ -1,5 +1,4 @@
-#ifndef VMES_TIMER_H
-#define VMES_TIMER_H
+#include "timer.h"
 
 #include <unistd.h>
 #include <iostream>
@@ -21,5 +20,3 @@ uint64_t time_ms() {
 void sleep_ms(uint16_t milliseconds) {
     usleep(milliseconds * 1000);
 }
-
-#endif //VMES_TIMER_H

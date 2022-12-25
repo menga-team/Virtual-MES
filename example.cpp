@@ -1,8 +1,5 @@
-#ifndef VMES_ENGINE_H
-#define VMES_ENGINE_H
-
-#include "vmes.h"
-#include "drivers/timer.h"
+#include <vmes.h>
+#include <timer.h>
 
 // if delta-time is above 65 seconds I have more important concerns than overflowing
 uint16_t deltatime;
@@ -18,9 +15,7 @@ void update() {
     // do something
 
     // fps cap
-    if(16 - deltatime > 0) {
+    if (16 - deltatime > 0) {
         sleep_ms(16 - deltatime);
     }
 }
-
-#endif //VMES_ENGINE_H

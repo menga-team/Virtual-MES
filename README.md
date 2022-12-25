@@ -8,20 +8,16 @@ Nonetheless, software in C can be tested using VMES just fine.
 
 ## Drivers:
 
+All publicly accessible variables intended for internal use are prefixed with
+`_vmes_<filename>`
+
 ### Controller:
-* `get_button_by_contorller_and_index`
-* `get_button_by_contorller_and_index_copy`
-* `get_button_by_index`
-* `get_button_by_index_copy`
-* `get_buttons_by_controller`
-* `get_buttons_by_controller_copy`
-* `get_controller_status`
-* `get_controller_status_copy`
-* `get_controller_statuses`
-* `get_controller_statuses_copy`
+* `controller_get_button`
+* `controller_get_statuses`
 
 ### GPU:
 
+* `set_palette`
 * [TODO] `send_buffer`
 * [TODO] `send_rectangle`
 * [TODO] `swap_buffers`

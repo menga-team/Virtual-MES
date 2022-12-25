@@ -11,7 +11,8 @@ find_package(SDL2_image REQUIRED)
 
 include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(${SDL2_IMAGE_INCLUDE_DIRS})
+include_directories(src)
 
-add_executable(vmes main.cpp)
+add_executable(vmes example.cpp src/gpu.cpp src/controller.cpp src/timer.cpp)
 target_link_libraries(vmes ${SDL2_LIBRARIES})
 target_link_libraries(vmes ${SDL2_IMAGE_LIBRARIES})
