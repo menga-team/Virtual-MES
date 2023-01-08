@@ -1,18 +1,22 @@
 cmake_minimum_required(VERSION 3.20)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_C_STANDARD 11)
 
 # https://trenki2.github.io/blog/2017/07/04/using-sdl2-image-with-cmake/
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+# set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 project(vmes)
 
 find_package(SDL2 REQUIRED)
-find_package(SDL2_image REQUIRED)
+# find_package(SDL2_image REQUIRED)
 
 include_directories(${SDL2_INCLUDE_DIRS})
-include_directories(${SDL2_IMAGE_INCLUDE_DIRS})
+# include_directories(${SDL2_IMAGE_INCLUDE_DIRS})
 include_directories(src)
 
-add_executable(vmes example.cpp src/gpu.cpp src/controller.cpp src/timer.cpp)
-target_link_libraries(vmes ${SDL2_LIBRARIES})
-target_link_libraries(vmes ${SDL2_IMAGE_LIBRARIES})
+add_executable(examplec examples/example.c src/gpu.c src/controller.c src/timer.c src/mesmath.h src/mesgraphics.h)
+target_link_libraries(examplec ${SDL2_LIBRARIES})
+target_link_libraries(examplec ${SDL2_IMAGE_LIBRARIES})
+
+add_executable(cubec examples/cube.c src/gpu.c src/controller.c src/timer.c src/mesmath.h src/mesgraphics.h)
+target_link_libraries(cubec ${SDL2_LIBRARIES})
+target_link_libraries(cubec ${SDL2_IMAGE_LIBRARIES})

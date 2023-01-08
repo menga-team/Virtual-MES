@@ -2,11 +2,12 @@
 
 #include <SDL.h>
 
-// order: up left down right start select a b
+// order:
+// 0   1     2     3      4      5       6  7
+// up  left  down  right  start  select  a  b
+
 uint8_t _vmes_controller_buttons[32] = { 0 };
 uint8_t _vmes_controller_active[4] = { 0 };
-
-const uint8_t *_vmes_controller_keyboard_state = SDL_GetKeyboardState(NULL);
 
 const uint8_t _vmes_controller_button_key_map[32] = {
         // controller 0
@@ -51,6 +52,8 @@ const uint8_t _vmes_controller_button_key_map[32] = {
 };
 
 void _vmes_controller_update() {
+    const uint8_t *_vmes_controller_keyboard_state = SDL_GetKeyboardState(NULL);
+
     for (int i = 0; i < 32; i++) {
         _vmes_controller_buttons[i] = _vmes_controller_keyboard_state[_vmes_controller_button_key_map[i]];
     }
