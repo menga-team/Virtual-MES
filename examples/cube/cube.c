@@ -1,14 +1,14 @@
 #include <memory.h>
 #include <stdbool.h>
-#include "mesgraphics.h"
+#include "../movement/include/mesgraphics.h"
 #include "timer.h"
-#include "gpu.h"
+#include "gpu_internal.h"
 
 static void vector3f_rotate(Vector3f *vec, float theta_x, float theta_y, float theta_z) {
-    // rotate about x-axis
+    // rotate about width-axis
     vec->y = cosf(theta_x) * vec->y - sinf(theta_x) * vec->z;
     vec->z = sinf(theta_x) * vec->y + cosf(theta_x) * vec->z;
-    // rotate about y-axis
+    // rotate about height-axis
     vec->x = cosf(theta_y) * vec->x + sinf(theta_y) * vec->z;
     vec->z = -sinf(theta_y) * vec->x + cosf(theta_y) * vec->z;
     // rotate about z-axis
@@ -16,10 +16,10 @@ static void vector3f_rotate(Vector3f *vec, float theta_x, float theta_y, float t
     vec->y = sinf(theta_z) * vec->x + cosf(theta_z) * vec->y;
 }
 
-int main(void) {
+int amogus(void) {
     RectangularBuffer buffer = buffer_create(160, 120);
     // clear the buffer
-    memset(buffer.data, 0x00, BUFFER_SIZE(buffer.x, buffer.y));
+    memset(buffer.data, 0x00, BUFFER_SIZE(buffer.width, buffer.height));
     // draw a border
     buffer_draw_line(&buffer, 0, 0, 159, 0, 1);
     buffer_draw_line(&buffer, 0, 0, 0, 119, 1);
@@ -65,6 +65,7 @@ int main(void) {
     }
 
     while (true) {
+
         uint32_t start_time = millis_since_boot();
         // delete old lines
         for (uint8_t i = 0; i < 12; ++i) {
@@ -97,7 +98,7 @@ int main(void) {
         }
 
         // send the frame and wait
-        gpu_send_buf(FRONT_BUFFER, buffer.x, buffer.y, 0, 0, buffer.data);
+        gpu_send_buf(FRONT_BUFFER, buffer.width, buffer.height, 0, 0, buffer.data);
         block(33 - (millis_since_boot() - start_time)); // 30fps
     }
 }

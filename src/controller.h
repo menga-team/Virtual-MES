@@ -1,24 +1,7 @@
-#ifndef VMES_CONTROLLER_H
-#define VMES_CONTROLLER_H
+#ifndef MES_CONTROLLER_H
+#define MES_CONTROLLER_H
 
-#include <stdint.h>
-
-#define BUTTON_UP 0
-#define BUTTON_LEFT 1
-#define BUTTON_DOWN 2
-#define BUTTON_RIGHT 3
-#define BUTTON_START 4
-#define BUTTON_SELECT 5
-#define BUTTON_A 6
-#define BUTTON_B 7
-
-extern uint8_t _vmes_controller_buttons[32];
-
-extern uint8_t _vmes_controller_active[4];
-
-extern const uint8_t _vmes_controller_button_key_map[32];
-
-void _vmes_controller_update();
+#include "controller_internal.h"
 
 /**
  * Gets button state by controller index and button index.
@@ -27,14 +10,31 @@ void _vmes_controller_update();
  *
  * @return: button state
  */
-uint8_t controller_get_button(int controller, int button);
+uint16_t controller_get_button_by_controller_and_index(int controller, int button);
 
-/*
- * gets array of controller statuses
+/**
+ * Gets array of button states by controller index
+ *
+ * @param controller: index of controller
+ *
+ * @return: array button states
+ */
+uint16_t *controller_get_buttons(int controller);
+
+/**
+ * Gets controller status
+ *
+ * @param controller: index of controller
+ *
+ * @return: status of controller
+ */
+uint16_t controller_get_status(int controller);
+
+/**
+ * Gets array of controller statuses
  *
  * @return: array of controller status
  */
-uint8_t * controller_get_statuses();
+uint8_t *controller_get_statuses(void);
 
-
-#endif //VMES_CONTROLLER_H
+#endif //MES_CONTROLLER_H

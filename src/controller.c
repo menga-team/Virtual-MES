@@ -1,4 +1,5 @@
 #include "controller.h"
+#include "controller_internal.h"
 
 #include <SDL.h>
 
@@ -53,13 +54,12 @@ const uint8_t _vmes_controller_button_key_map[32] = {
 
 void _vmes_controller_update() {
     const uint8_t *_vmes_controller_keyboard_state = SDL_GetKeyboardState(NULL);
-
     for (int i = 0; i < 32; i++) {
         _vmes_controller_buttons[i] = _vmes_controller_keyboard_state[_vmes_controller_button_key_map[i]];
     }
 }
 
-uint8_t controller_get_button(int controller, int button) {
+uint16_t controller_get_button_by_controller_and_index(int controller, int button) {
     return _vmes_controller_buttons[(controller * 4) + button];
 }
 

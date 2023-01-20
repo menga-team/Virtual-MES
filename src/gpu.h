@@ -1,18 +1,7 @@
-#ifndef VMES_GPU_H
-#define VMES_GPU_H
+#ifndef MES_GPU_H
+#define MES_GPU_H
 
-#include <stdint.h>
-#include <stdbool.h>
-
-#include <SDL.h>
-
-extern uint8_t* _vmes_gpu_buffer1;
-extern uint8_t* _vmes_gpu_buffer2;
-extern bool* _vmes_gpu_buffer_switch;
-uint8_t* _vmes_gpu_front_buffer();
-uint8_t* _vmes_gpu_back_buffer();
-
-void _vmes_gpu_init(uint8_t* buffer1, uint8_t* buffer2, bool* buffer_switch);
+#include "gpu_internal.h"
 
 enum Buffer {
     FRONT_BUFFER = 0, BACK_BUFFER = 1
@@ -20,10 +9,18 @@ enum Buffer {
 
 typedef enum Buffer Buffer;
 
-void gpu_set_palette(uint16_t* colors);
+/// Prints text on the Monitor.
+void gpu_print_text(Buffer buffer, uint8_t ox, uint8_t oy, uint8_t foreground, uint8_t background, const char *text);
 
-void gpu_send_rectangle(Buffer buffer, uint8_t posx, uint8_t posy, uint8_t width, uint8_t height, const uint8_t *pixels);
+/// Will reset the GPU. Resetting everything as if someone would disconnect the power.
+void gpu_reset(void);
 
-void gpu_swap_buffers();
+void gpu_blank(Buffer buffer, uint8_t blank_with);
 
-#endif //VMES_GPU_H
+void gpu_swap_buf(void);
+
+void gpu_send_buf(Buffer buffer, uint8_t xx, uint8_t yy, uint8_t ox, uint8_t oy, void *pixels);
+
+void gpu_display_buf(uint8_t xx, uint8_t yy, uint8_t ox, uint8_t oy, void *pixels);
+
+#endif //MES_GPU_H
