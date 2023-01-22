@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <signal.h>
 
 #include <SDL.h>
 #include <SDL_timer.h>
@@ -21,7 +22,7 @@ int main() {
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
 
     // SDL window and renderer
-    SDL_Window* window = SDL_CreateWindow("Virtual-MES",SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH*WINDOW_SCALE, HEIGHT*WINDOW_SCALE, 0);
+    SDL_Window* window = SDL_CreateWindow("Virtual-MES", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH * _VMES_WINDOW_SCALE, HEIGHT * _VMES_WINDOW_SCALE, 0);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
     // buffers
@@ -52,7 +53,7 @@ int main() {
 
     // game thread
     int data = 101;
-    SDL_Thread* threadID = SDL_CreateThread( mes_main, "MES_main", (void*)data );
+    SDL_Thread* thread = SDL_CreateThread( mes_main, "MES_main", (void*)data );
 
     // game loop
     while (!quit) {
@@ -93,6 +94,7 @@ int main() {
     }
 
     // cleanup
+    pthread_kill((pthread_t) SDL_GetThreadID(thread), 0);
     SDL_FreeSurface(surface1);
     SDL_FreeSurface(surface2);
     free(buffer1);

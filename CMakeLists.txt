@@ -13,9 +13,13 @@ include_directories(${SDL2_INCLUDE_DIRS})
 # include_directories(${SDL2_IMAGE_INCLUDE_DIRS})
 include_directories(src)
 
-add_executable(examplec examples/movement/src/main.c src/vmes.c src/gpu.c src/controller.c src/timer.c src/gpu.h src/gpu_internal.h src/controller.h src/controller_internal.h src/timer.h examples/movement/include/mesmath.h examples/movement/include/mesgraphics.h)
-target_link_libraries(examplec ${SDL2_LIBRARIES})
-target_link_libraries(examplec ${SDL2_IMAGE_LIBRARIES})
+add_executable(movement examples/movement/src/main.c src/vmes.c src/gpu.c src/controller.c src/timer.c src/gpu.h src/gpu_internal.h src/controller.h src/controller_internal.h src/timer.h examples/movement/include/mesmath.h examples/movement/include/mesgraphics.h)
+target_link_libraries(movement ${SDL2_LIBRARIES})
+target_link_libraries(movement ${SDL2_IMAGE_LIBRARIES})
+
+add_executable(debug examples/debug/src/main.c src/vmes.c src/gpu.c src/controller.c src/timer.c src/gpu.h src/gpu_internal.h src/controller.h src/controller_internal.h src/timer.h)
+target_link_libraries(debug ${SDL2_LIBRARIES})
+target_link_libraries(debug ${SDL2_IMAGE_LIBRARIES})
 
 #add_executable(cubec examples/cube/cube.c src/gpu.c src/controller.c src/timer.c examples/movement/include/mesmath.h examples/movement/include/mesgraphics.h examples/movement/include/mesmath.h)
 #target_link_libraries(cubec ${SDL2_LIBRARIES})

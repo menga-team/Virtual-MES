@@ -14,30 +14,37 @@ void _vmes_gpu_init(uint8_t* sdl_buffer1, uint8_t* sdl_buffer2, bool* buffer_swi
     _vmes_gpu_buffer1 = sdl_buffer1;
     _vmes_gpu_buffer2 = sdl_buffer2;
     _vmes_gpu_buffer_switch = buffer_switch;
-    _vmes_color_palette = malloc(8*3); // 8 distinct colors at 3bpp * 3 values (RGB) per color
+    _vmes_color_palette = malloc(8*3); // 8 distinct colors * 3 values (RGB) per color
 
     // default color palette
     _VMES_PALETTE_SET(_vmes_color_palette, 0, 0b000, 0b000, 0b000); // black
-    _VMES_PALETTE_SET(_vmes_color_palette, 1, 0b000, 0b000, 0b000); // white
-    _VMES_PALETTE_SET(_vmes_color_palette, 2, 0b000, 0b000, 0b000); // red
-    _VMES_PALETTE_SET(_vmes_color_palette, 3, 0b000, 0b000, 0b000); // green
-    _VMES_PALETTE_SET(_vmes_color_palette, 4, 0b000, 0b000, 0b000); // blue
-    _VMES_PALETTE_SET(_vmes_color_palette, 5, 0b000, 0b000, 0b000); // yellow
-    _VMES_PALETTE_SET(_vmes_color_palette, 6, 0b000, 0b000, 0b000); // magenta
-    _VMES_PALETTE_SET(_vmes_color_palette, 7, 0b000, 0b000, 0b000); // cyan
+    _VMES_PALETTE_SET(_vmes_color_palette, 1, 0b111, 0b111, 0b111); // white
+    _VMES_PALETTE_SET(_vmes_color_palette, 2, 0b111, 0b000, 0b000); // red
+    _VMES_PALETTE_SET(_vmes_color_palette, 3, 0b000, 0b111, 0b000); // green
+    _VMES_PALETTE_SET(_vmes_color_palette, 4, 0b000, 0b000, 0b111); // blue
+    _VMES_PALETTE_SET(_vmes_color_palette, 5, 0b111, 0b111, 0b000); // yellow
+    _VMES_PALETTE_SET(_vmes_color_palette, 6, 0b111, 0b000, 0b111); // magenta
+    _VMES_PALETTE_SET(_vmes_color_palette, 7, 0b000, 0b111, 0b111); // cyan
 }
 
 void _vmes_gpu_setpixel(uint8_t* sdl_buffer, uint8_t x, uint8_t y, uint8_t color) {
-    sdl_buffer[y*WIDTH*(_VMES_BPP/8)+x+RBIT] = _VMES_PALETTE_GET_R(_vmes_color_palette, color);
-    sdl_buffer[y*WIDTH*(_VMES_BPP/8)+x+GBIT] = _VMES_PALETTE_GET_G(_vmes_color_palette, color);
-    sdl_buffer[y*WIDTH*(_VMES_BPP/8)+x+BBIT] = _VMES_PALETTE_GET_B(_vmes_color_palette, color);
-    sdl_buffer[y*WIDTH*(_VMES_BPP/8)+x+ABIT] = 255;
+    sdl_buffer[y*WIDTH*(_VMES_BPP/8) + x*(_VMES_BPP/8) + RBIT] = (uint8_t) round((_VMES_PALETTE_GET_R(_vmes_color_palette, color)/7.0)*255);
+    sdl_buffer[y*WIDTH*(_VMES_BPP/8) + x*(_VMES_BPP/8) + GBIT] = (uint8_t) round((_VMES_PALETTE_GET_G(_vmes_color_palette, color)/7.0)*255);
+    sdl_buffer[y*WIDTH*(_VMES_BPP/8) + x*(_VMES_BPP/8) + BBIT] = (uint8_t) round((_VMES_PALETTE_GET_B(_vmes_color_palette, color)/7.0)*255);
+    sdl_buffer[y*WIDTH*(_VMES_BPP/8) + x*(_VMES_BPP/8) + ABIT] = 255;
 }
 
-uint8_t _vmes_gpu_getpixel(uint8_t* mes_buffer, uint8_t x, uint8_t y) {
-    uint16_t position = y*WIDTH + x;
-    uint32_t bytes = (*(uint32_t *) (mes_buffer + (position / 8) * BPP)) /*& 0x00FFFFFF*/;
-    return (bytes >> ((7 - (position % 8)) * BPP)) & PIXEL_MASK;
+uint8_t _vmes_gpu_singlebit(uint8_t* mes_buffer, uint8_t width, uint8_t x, uint8_t y, uint8_t index) {
+    uint32_t pixels = y*width+x;
+    uint32_t bit = pixels*BPP + index;
+    uint32_t byte = bit/BPB;
+    uint32_t floored_bits = byte*BPB;
+    uint8_t data = (mes_buffer[byte] >> (7 - (bit-floored_bits))) & 1;
+    return data << (2 - index);
+}
+
+uint8_t _vmes_gpu_getpixel(uint8_t* mes_buffer, uint8_t width, uint8_t x, uint8_t y) {
+    return _vmes_gpu_singlebit(mes_buffer, width, x, y, 0) | _vmes_gpu_singlebit(mes_buffer, width, x, y, 1) | _vmes_gpu_singlebit(mes_buffer, width, x, y, 2);
 }
 
 // =========================== MES ============================
@@ -51,7 +58,9 @@ void gpu_reset(void) {
 }
 
 void gpu_blank(Buffer buffer, uint8_t blank_with) {
-
+    uint8_t* pixels = malloc((WIDTH*HEIGHT*3) / 8);
+    memset(pixels, blank_with, (WIDTH*HEIGHT*3) / 8);
+    gpu_send_buf(buffer, WIDTH, HEIGHT, 0, 0, pixels);
 }
 
 void gpu_swap_buf(void) {
@@ -62,9 +71,9 @@ void gpu_send_buf(Buffer buffer, uint8_t width, uint8_t height, uint8_t posx, ui
     uint8_t* sdl_buffer;
     if (buffer == FRONT_BUFFER) sdl_buffer = _vmes_gpu_front_buffer();
     else sdl_buffer = _vmes_gpu_back_buffer();
-    for (int i = posy; i < posy+height; i++) {
-        for (int j = posx; j < posx+width; j++) {
-            _vmes_gpu_setpixel(sdl_buffer, j, i, _vmes_gpu_getpixel((uint8_t*) pixels, j, i));
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            _vmes_gpu_setpixel(sdl_buffer, j+posx, i+posy, _vmes_gpu_getpixel((uint8_t*) pixels, width, j, i));
         }
     }
 }

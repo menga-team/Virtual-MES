@@ -4,12 +4,12 @@
 #include <math.h>
 #include "stdint.h"
 #include "stdlib.h"
-#include "mesmath.h"
+#include <stdbool.h>
 
 #define BUFFER_BPP 3
-#define BUFFER_SIZE(X, Y) (lroundf(3 * ((X * Y) / 8)))
-#define BUFFER_POSITION(RECT, X, Y) (Y * RECT->width + X)
-#define MG_PIXEL_MASK ((1 << BUFFER_BPP) - 1)
+#define BUFFER_SIZE(X, Y) ((uint16_t)ceil((float)(3 * (X * Y)) / 8.0))
+#define BUFFER_POSITION(RECT, X, Y) ((Y) * (RECT)->width + (X))
+#define PIXEL_MASK ((1 << BUFFER_BPP) - 1)
 
 #define vector3_subtract(L, R) (L)->x -= (R)->x; (L)->y -= (R)->y; (L)->z -= (R)->z
 #define vector3_add(L, R) (L)->x += (R)->x; (L)->y += (R)->y; (L)->z += (R)->z
@@ -90,14 +90,14 @@ static void buffer_set_pixel(RectangularBuffer *rect, uint8_t x, uint8_t y, uint
     uint16_t pos = BUFFER_POSITION(rect, x, y);
     uint32_t *pixels = (uint32_t *) (rect->data + (pos / 8) * BUFFER_BPP);
     uint8_t shift = (7 - (pos % 8)) * BUFFER_BPP;
-    uint32_t mask = MG_PIXEL_MASK << shift;
-    *pixels = (*pixels & ~mask) | ((color & MG_PIXEL_MASK) << shift);
+    uint32_t mask = PIXEL_MASK << shift;
+    *pixels = (*pixels & ~mask) | ((color & PIXEL_MASK) << shift);
 }
 
 static uint8_t buffer_get_pixel(RectangularBuffer *rect, uint8_t x, uint8_t y) {
     uint16_t pos = BUFFER_POSITION(rect, x, y);
-    uint32_t pixels = (*(uint32_t *) (rect->data + pos * BUFFER_BPP));
-    return (pixels >> ((7 - (pos % 8)) * BUFFER_BPP)) & MG_PIXEL_MASK;
+    uint32_t pixels = (*(uint32_t *) (rect->data + (pos / 8) * BUFFER_BPP));
+    return (pixels >> ((7 - (pos % 8)) * BUFFER_BPP)) & PIXEL_MASK;
 }
 
 static void buffer_draw_line(RectangularBuffer *rect, uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color) {
