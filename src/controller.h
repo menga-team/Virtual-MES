@@ -10,7 +10,7 @@
  *
  * @return: button state
  */
-uint16_t controller_get_button_by_controller_and_index(int controller, int button);
+uint8_t controller_get_button_by_controller_and_index(int controller, int button);
 
 /**
  * Gets array of button states by controller index
@@ -19,7 +19,7 @@ uint16_t controller_get_button_by_controller_and_index(int controller, int butto
  *
  * @return: array button states
  */
-uint16_t *controller_get_buttons(int controller);
+uint8_t *controller_get_buttons(int controller);
 
 /**
  * Gets controller status
@@ -28,7 +28,7 @@ uint16_t *controller_get_buttons(int controller);
  *
  * @return: status of controller
  */
-uint16_t controller_get_status(int controller);
+uint8_t controller_get_status(int controller);
 
 /**
  * Gets array of controller statuses

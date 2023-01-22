@@ -12,7 +12,7 @@
 #include "timer.h"
 
 // mes main
-int mes_main();
+uint8_t start(void);
 
 // vmes main
 int main() {
@@ -48,12 +48,11 @@ int main() {
 
     // timing
     uint32_t deltatime;
-    uint32_t stop;
-    uint32_t start;
+    uint32_t stop_time;
+    uint32_t start_time;
 
     // game thread
-    int data = 101;
-    SDL_Thread* thread = SDL_CreateThread( mes_main, "MES_main", (void*)data );
+    SDL_Thread* thread = SDL_CreateThread((SDL_ThreadFunction) start, "MES_main", NULL);
 
     // game loop
     while (!quit) {
@@ -85,12 +84,12 @@ int main() {
         SDL_RenderPresent(renderer);
 
         // timing
-        stop = timer_get_ms();
-        deltatime = stop - start;
+        stop_time = timer_get_ms();
+        deltatime = stop_time - start_time;
         if (deltatime < _VMES_FRAMETIME) {
             timer_block_ms(_VMES_FRAMETIME - deltatime);
         }
-        start = timer_get_ms();
+        start_time = timer_get_ms();
     }
 
     // cleanup

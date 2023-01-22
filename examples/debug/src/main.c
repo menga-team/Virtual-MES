@@ -22,7 +22,7 @@ int bufferbytes(uint8_t width, uint8_t height) {
     return roundup(ceil((width*height*BPP) / BPBFLOAT), 3);
 }
 
-int mes_main( void* data) {
+uint8_t start(void) {
     printf("mes_main called\n");
 
     uint32_t deltatime;

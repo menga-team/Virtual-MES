@@ -59,10 +59,18 @@ void _vmes_controller_update() {
     }
 }
 
-uint16_t controller_get_button_by_controller_and_index(int controller, int button) {
+uint8_t controller_get_button_by_controller_and_index(int controller, int button) {
     return _vmes_controller_buttons[(controller * 4) + button];
 }
 
-uint8_t * controller_get_statuses() {
+uint8_t* controller_get_buttons(int controller) {
+    return _vmes_controller_buttons + controller*8;
+}
+
+uint8_t controller_get_status(int controller) {
+    return _vmes_controller_active[controller];
+}
+
+uint8_t* controller_get_statuses(void) {
     return _vmes_controller_active;
 }

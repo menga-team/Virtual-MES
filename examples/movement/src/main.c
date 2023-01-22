@@ -10,7 +10,7 @@
 #define FRAMETIME ((1.0/FPS)*1000)
 #define PLAYERSIZE 10
 
-int mes_main( void* data) {
+uint8_t start(void) {
     uint32_t deltatime;
     uint32_t stop;
     uint32_t start;

@@ -16,7 +16,7 @@ static void vector3f_rotate(Vector3f *vec, float theta_x, float theta_y, float t
         vec->y = sinf(theta_z) * vec->x + cosf(theta_z) * vec->y;
 }
 
-int mes_main(void) {
+uint8_t start(void) {
         RectangularBuffer buffer = buffer_create(160, 120);
         // clear the buffer
         memset(buffer.data, 0x00, BUFFER_SIZE(buffer.width, buffer.height));
