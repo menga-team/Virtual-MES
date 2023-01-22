@@ -9,6 +9,19 @@
 #define FRAMETIME ((1.0/FPS)*1000)
 #define SIZE 10
 
+/// round value up to the next multiple of a certain number
+int roundup(int number, int multiple) {
+    if (multiple == 0) return number;
+    int remainder = number % multiple;
+    if (remainder == 0) return number;
+    return number + multiple - remainder;
+}
+
+/// returns the number of bytes needed to save a buffer of given dimensions
+int bufferbytes(uint8_t width, uint8_t height) {
+    return roundup(ceil((width*height*BPP) / BPBFLOAT), 3);
+}
+
 int mes_main( void* data) {
     printf("mes_main called\n");
 
@@ -16,10 +29,10 @@ int mes_main( void* data) {
     uint32_t stop;
     uint32_t start;
 
-    uint8_t* rectangle = malloc(ceil((SIZE*SIZE*3) / 8.0));
-    memset(rectangle, 0xFF, ceil((SIZE*SIZE*3) / 8.0));
+    uint8_t* rectangle = malloc(bufferbytes(SIZE, SIZE));
+    memset(rectangle, 0xFF, bufferbytes(SIZE, SIZE));
 
-    uint8_t rect2[4] = {0b11111111, 0b11111111, 0b11111111, 0b11100000};
+    uint8_t rect2[6] = {0b11111111, 0b11111111, 0b11111111, 0b00000000, 0b00000000, 0b11100000};
     uint8_t* rect2ptr = (uint8_t*) &rect2;
 
     start = timer_get_ms();

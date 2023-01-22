@@ -25,6 +25,7 @@
 #define HEIGHT 120
 #define BPP 3
 #define BPB 8
+#define BPBFLOAT 8.0
 
 // sdl surface
 #define _VMES_WINDOW_SCALE 3 // mes buffer pixel to screen pixel ratio

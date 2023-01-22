@@ -34,17 +34,10 @@ void _vmes_gpu_setpixel(uint8_t* sdl_buffer, uint8_t x, uint8_t y, uint8_t color
     sdl_buffer[y*WIDTH*(_VMES_BPP/8) + x*(_VMES_BPP/8) + ABIT] = 255;
 }
 
-uint8_t _vmes_gpu_singlebit(uint8_t* mes_buffer, uint8_t width, uint8_t x, uint8_t y, uint8_t index) {
-    uint32_t pixels = y*width+x;
-    uint32_t bit = pixels*BPP + index;
-    uint32_t byte = bit/BPB;
-    uint32_t floored_bits = byte*BPB;
-    uint8_t data = (mes_buffer[byte] >> (7 - (bit-floored_bits))) & 1;
-    return data << (2 - index);
-}
-
 uint8_t _vmes_gpu_getpixel(uint8_t* mes_buffer, uint8_t width, uint8_t x, uint8_t y) {
-    return _vmes_gpu_singlebit(mes_buffer, width, x, y, 0) | _vmes_gpu_singlebit(mes_buffer, width, x, y, 1) | _vmes_gpu_singlebit(mes_buffer, width, x, y, 2);
+    uint16_t pos = y * width + x;
+    uint32_t pixels = (*(uint32_t *) (mes_buffer + (pos / 8) * BPP));
+    return (pixels >> ((7 - (pos % 8)) * BPP)) & ((1 << BPP) - 1);
 }
 
 // =========================== MES ============================
