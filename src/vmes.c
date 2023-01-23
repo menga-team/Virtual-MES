@@ -27,11 +27,9 @@ int main() {
 
     // buffers
     uint8_t* buffer1 = (uint8_t*) malloc(_VMES_BUFFERSIZE);
-    for (int i = 0; i < _VMES_BUFFERSIZE; i++) { // fill every pixel with 0xFFFFFFFF
-        buffer1[i] = (uint8_t) 255;
-    }
+    memset(buffer1, 0xFF, _VMES_BUFFERSIZE);
     uint8_t* buffer2 = (uint8_t*) malloc(_VMES_BUFFERSIZE);
-    memcpy(buffer2, buffer1, _VMES_BUFFERSIZE);
+    memset(buffer2, 0xFF, _VMES_BUFFERSIZE);
 
     // surfaces and texture
     SDL_Surface* surface1 = SDL_CreateRGBSurfaceFrom(buffer1, WIDTH, HEIGHT, _VMES_BPP, (_VMES_BPP / 8) * WIDTH, RMASK, GMASK, BMASK, AMASK);
@@ -82,6 +80,7 @@ int main() {
         else texture = SDL_CreateTextureFromSurface(renderer, surface2);
         SDL_RenderCopy(renderer, texture, NULL, NULL);
         SDL_RenderPresent(renderer);
+        SDL_DestroyTexture(texture);
 
         // timing
         stop_time = timer_get_ms();

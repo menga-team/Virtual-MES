@@ -9,13 +9,14 @@ bool* _vmes_gpu_buffer_switch = NULL;
 uint8_t* _vmes_color_palette = NULL;
 uint8_t* _vmes_gpu_front_buffer() {if (*_vmes_gpu_buffer_switch) return _vmes_gpu_buffer1; else return _vmes_gpu_buffer2;}
 uint8_t* _vmes_gpu_back_buffer() {if (*_vmes_gpu_buffer_switch) return _vmes_gpu_buffer2; else return _vmes_gpu_buffer1;}
+uint8_t* _vmes_blank_buffer = NULL;
 
 void _vmes_gpu_init(uint8_t* sdl_buffer1, uint8_t* sdl_buffer2, bool* buffer_switch) {
     _vmes_gpu_buffer1 = sdl_buffer1;
     _vmes_gpu_buffer2 = sdl_buffer2;
     _vmes_gpu_buffer_switch = buffer_switch;
     _vmes_color_palette = malloc(8*3); // 8 distinct colors * 3 values (RGB) per color
-
+    _vmes_blank_buffer = malloc((WIDTH*HEIGHT*3) / 8);
     // default color palette
     _VMES_PALETTE_SET(_vmes_color_palette, 0, 0b000, 0b000, 0b000); // black
     _VMES_PALETTE_SET(_vmes_color_palette, 1, 0b111, 0b111, 0b111); // white
@@ -51,9 +52,8 @@ void gpu_reset(void) {
 }
 
 void gpu_blank(Buffer buffer, uint8_t blank_with) {
-    uint8_t* pixels = malloc((WIDTH*HEIGHT*3) / 8);
-    memset(pixels, blank_with, (WIDTH*HEIGHT*3) / 8);
-    gpu_send_buf(buffer, WIDTH, HEIGHT, 0, 0, pixels);
+    memset(_vmes_blank_buffer, blank_with, (WIDTH*HEIGHT*3) / 8);
+    gpu_send_buf(buffer, WIDTH, HEIGHT, 0, 0, _vmes_blank_buffer);
 }
 
 void gpu_swap_buf(void) {

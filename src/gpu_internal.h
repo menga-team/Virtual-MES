@@ -28,7 +28,7 @@
 #define BPBFLOAT 8.0
 
 // sdl surface
-#define _VMES_WINDOW_SCALE 3 // mes buffer pixel to screen pixel ratio
+#define _VMES_WINDOW_SCALE 5 // mes buffer pixel to screen pixel ratio
 #define _VMES_FPS 120
 #define _VMES_FRAMETIME (1.0/_VMES_FPS)
 #define _VMES_BPP 32
@@ -48,6 +48,7 @@ extern bool* _vmes_gpu_buffer_switch;
 uint8_t* _vmes_color_palette;
 uint8_t* _vmes_gpu_front_buffer();
 uint8_t* _vmes_gpu_back_buffer();
+uint8_t* _vmes_blank_buffer;
 
 /// initialize gpu virtualization
 void _vmes_gpu_init(uint8_t* sdl_buffer1, uint8_t* sdl_buffer2, bool* buffer_switch);
