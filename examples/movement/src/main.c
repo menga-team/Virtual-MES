@@ -17,7 +17,7 @@ uint8_t start(void) {
     RectangularBuffer player = buffer_create(PLAYERSIZE, PLAYERSIZE);
     uint8_t playerx = 0;
     uint8_t playery = 0;
-
+    char* teststring = "amogus! " FONT_AMOGUS " amogus";
     memset(player.data, 0xFF, BUFFER_SIZE(player.width, player.height));
     start = timer_get_ms();
 
@@ -32,6 +32,8 @@ uint8_t start(void) {
         // player rendering
         gpu_blank(BACK_BUFFER, 0);
         gpu_send_buf(BACK_BUFFER, player.width, player.height, playerx, playery, player.data);
+        gpu_print_text(BACK_BUFFER, 1, 1, 1, 3, teststring);
+        gpu_print_transparent_text(BACK_BUFFER, 1, 10, 1, teststring);
         gpu_swap_buf();
 
         // timing

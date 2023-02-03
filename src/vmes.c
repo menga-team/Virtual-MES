@@ -35,10 +35,18 @@ int main() {
     SDL_Surface* surface1 = SDL_CreateRGBSurfaceFrom(buffer1, WIDTH, HEIGHT, _VMES_BPP, (_VMES_BPP / 8) * WIDTH, RMASK, GMASK, BMASK, AMASK);
     SDL_Surface* surface2 = SDL_CreateRGBSurfaceFrom(buffer2, WIDTH, HEIGHT, _VMES_BPP, (_VMES_BPP / 8) * WIDTH, RMASK, GMASK, BMASK, AMASK);
     SDL_Texture* texture;
+    SDL_Rect fullscreen;
+    fullscreen.h = HEIGHT*_VMES_WINDOW_SCALE;
+    fullscreen.w = WIDTH*_VMES_WINDOW_SCALE;
+    fullscreen.x = 0;
+    fullscreen.y = 0;
 
     // gpu header init
     bool buffer_switch = true;
-    _vmes_gpu_init(buffer1, buffer2, &buffer_switch);
+    bool reset_switch = false;
+    bool dont_render = false;
+    uint16_t dont_render_time = 0;
+    _vmes_gpu_init(buffer1, buffer2, &buffer_switch, &reset_switch);
 
     // event handling
     bool quit = false;
@@ -76,12 +84,27 @@ int main() {
         _vmes_controller_update();
 
         // render current front_buffer
-        if (buffer_switch) texture = SDL_CreateTextureFromSurface(renderer, surface1);
-        else texture = SDL_CreateTextureFromSurface(renderer, surface2);
-        SDL_RenderCopy(renderer, texture, NULL, NULL);
-        SDL_RenderPresent(renderer);
-        SDL_DestroyTexture(texture);
+        if (reset_switch) {
+            dont_render = true;
+            dont_render_time = 0;
+            reset_switch = false;
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+            SDL_RenderFillRect(renderer, &fullscreen);
+            SDL_RenderPresent(renderer);
+        }
 
+        if (!dont_render) {
+            if (buffer_switch) texture = SDL_CreateTextureFromSurface(renderer, surface1);
+            else texture = SDL_CreateTextureFromSurface(renderer, surface2);
+            SDL_RenderCopy(renderer, texture, NULL, NULL);
+            SDL_RenderPresent(renderer);
+            SDL_DestroyTexture(texture);
+        } else {
+            dont_render_time += deltatime;
+            if (dont_render_time > 500) {
+                dont_render = false;
+            }
+        }
         // timing
         stop_time = timer_get_ms();
         deltatime = stop_time - start_time;

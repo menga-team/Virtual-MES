@@ -1,22 +1,25 @@
 #include "gpu.h"
 #include "gpu_internal.h"
+#include "font.h"
 
 // =========================== VMES ===========================
 
 uint8_t* _vmes_gpu_buffer1 = NULL;
 uint8_t* _vmes_gpu_buffer2 = NULL;
 bool* _vmes_gpu_buffer_switch = NULL;
+bool* _vmes_gpu_reset = NULL;
 uint8_t* _vmes_color_palette = NULL;
 uint8_t* _vmes_gpu_front_buffer() {if (*_vmes_gpu_buffer_switch) return _vmes_gpu_buffer1; else return _vmes_gpu_buffer2;}
 uint8_t* _vmes_gpu_back_buffer() {if (*_vmes_gpu_buffer_switch) return _vmes_gpu_buffer2; else return _vmes_gpu_buffer1;}
 uint8_t* _vmes_blank_buffer = NULL;
 
-void _vmes_gpu_init(uint8_t* sdl_buffer1, uint8_t* sdl_buffer2, bool* buffer_switch) {
+void _vmes_gpu_init(uint8_t* sdl_buffer1, uint8_t* sdl_buffer2, bool* buffer_switch, bool* reset_switch) {
     _vmes_gpu_buffer1 = sdl_buffer1;
     _vmes_gpu_buffer2 = sdl_buffer2;
     _vmes_gpu_buffer_switch = buffer_switch;
     _vmes_color_palette = malloc(8*3); // 8 distinct colors * 3 values (RGB) per color
     _vmes_blank_buffer = malloc((WIDTH*HEIGHT*3) / 8);
+    _vmes_gpu_reset = reset_switch;
     // default color palette
     _VMES_PALETTE_SET(_vmes_color_palette, 0, 0b000, 0b000, 0b000); // black
     _VMES_PALETTE_SET(_vmes_color_palette, 1, 0b111, 0b111, 0b111); // white
@@ -41,14 +44,57 @@ uint8_t _vmes_gpu_getpixel(uint8_t* mes_buffer, uint8_t width, uint8_t x, uint8_
     return (pixels >> ((7 - (pos % 8)) * BPP)) & ((1 << BPP) - 1);
 }
 
+uint8_t _vmes_font_get_bit (uint8_t* buffer, uint32_t byte, uint8_t bit) {
+    uint8_t data_byte = buffer[byte] >> bit;
+    return data_byte & 1;
+}
+
+void _vmes_font_set_bit(uint8_t* buffer, uint32_t byte, uint8_t bit, uint8_t value) {
+    uint8_t mask = 1 << bit;
+    if (!value && _vmes_font_get_bit(buffer, byte, bit)) buffer[byte] &= ~mask;
+    if (value && !_vmes_font_get_bit(buffer, byte, bit)) buffer[byte] |= mask;
+}
+
+uint8_t* _vmes_get_sdl_buffer(Buffer buffer) {
+    uint8_t* sdl_buffer;
+    if (buffer == FRONT_BUFFER) sdl_buffer = _vmes_gpu_front_buffer();
+    else sdl_buffer = _vmes_gpu_back_buffer();
+    return sdl_buffer;
+}
+
 // =========================== MES ============================
 
 void gpu_print_text(Buffer buffer, uint8_t ox, uint8_t oy, uint8_t foreground, uint8_t background, const char *text) {
+    uint8_t* sdl_buffer = _vmes_get_sdl_buffer(buffer);
+    for (int i = 0; i < strlen(text); i++) {
+        uint8_t c = text[i];
+        uint8_t posx = ox+6*i;
+        uint8_t posy = oy;
+        for (int j = 0; j < 8; j++) {
+            for (int k = 0; k < 6; k++) {
+                if (GET_BIT(console_font_6x8, c*64 + j*8+k)) _vmes_gpu_setpixel(sdl_buffer, posx+k, posy+j, foreground);
+                else _vmes_gpu_setpixel(sdl_buffer, posx+k, posy+j, background);
+            }
+        }
+    }
+}
 
+void gpu_print_transparent_text(Buffer buffer, uint8_t ox, uint8_t oy, uint8_t color, const char *text) {
+    uint8_t* sdl_buffer = _vmes_get_sdl_buffer(buffer);
+    for (int i = 0; i < strlen(text); i++) {
+        uint8_t c = text[i];
+        uint8_t posx = ox+6*i;
+        uint8_t posy = oy;
+        for (int j = 0; j < 8; j++) {
+            for (int k = 0; k < 6; k++) {
+                if (GET_BIT(console_font_6x8, c*64 + j*8+k)) _vmes_gpu_setpixel(sdl_buffer, posx+k, posy+j, color);
+            }
+        }
+    }
 }
 
 void gpu_reset(void) {
-
+    *_vmes_gpu_reset = true;
 }
 
 void gpu_blank(Buffer buffer, uint8_t blank_with) {
@@ -71,6 +117,7 @@ void gpu_send_buf(Buffer buffer, uint8_t width, uint8_t height, uint8_t posx, ui
     }
 }
 
-void gpu_display_buf(uint8_t xx, uint8_t yy, uint8_t ox, uint8_t oy, void *pixels) {
-
+void gpu_display_buf(Buffer buffer, uint8_t width, uint8_t height, uint8_t posx, uint8_t posy, void *pixels) {
+    gpu_send_buf(buffer, width, height, posx, posy, pixels);
+    gpu_swap_buf();
 }

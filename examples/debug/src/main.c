@@ -62,6 +62,8 @@ uint8_t start(void) {
             }
         }
 
+        if (controller_get_button_by_controller_and_index(0, BUTTON_START)) gpu_reset();
+
         // draw stuff
         gpu_send_buf(BACK_BUFFER, SIZE, SIZE, 50, 50, rectangle);
         gpu_send_buf(BACK_BUFFER, 3, 3, 5, 5, rect2ptr);
