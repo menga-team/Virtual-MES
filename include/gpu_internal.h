@@ -315,10 +315,10 @@ extern uint8_t* _vmes_gpu_buffer1;
 extern uint8_t* _vmes_gpu_buffer2;
 extern bool* _vmes_gpu_buffer_switch;
 extern bool* _vmes_gpu_reset;
-uint8_t* _vmes_color_palette;
+extern uint8_t* _vmes_color_palette;
 uint8_t* _vmes_gpu_front_buffer();
 uint8_t* _vmes_gpu_back_buffer();
-uint8_t* _vmes_blank_buffer;
+extern uint8_t* _vmes_blank_buffer;
 
 uint8_t _vmes_font_get_bit (uint8_t* buffer, uint32_t byte, uint8_t bit);
 
