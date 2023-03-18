@@ -276,6 +276,17 @@
 #define _VMES_MAGENTA 6
 #define _VMES_CYAN 7
 
+// rgb to gpio config
+#define _COLOR(red, green, blue) (uint16_t)                                                \
+            (((red & 0b100) >> 1) | ((red & 0b010) << 9) | ((red & 0b001) << 11) |         \
+            ((green & 0b100) << 10) | ((green & 0b010) << 12) | ((green & 0b001) << 14) |  \
+            ((blue & 0b100) << 5) | ((blue & 0b010) << 7) | ((blue & 0b001) << 9))
+
+// gpio config to rgb
+#define _RED(color) (((color << 1) & 0b100) | ((color >> 9) & 0b010 ) | ((color >> 11) & 0b001))
+#define _GREEN(color) (((color >> 10) & 0b100) | ((color >> 12) & 0b010) | ((color >> 14) & 0b001))
+#define _BLUE(color) (((color >> 5) & 0b100) | ((color >> 7) & 0b010) | ((color >> 9) & 0b001))
+
 // mes buffer
 #define WIDTH 160
 #define HEIGHT 120
@@ -297,8 +308,8 @@
 #define GBIT 2
 #define BBIT 1
 #define ABIT 0
-#define GET_BIT(BUFFER, B) _vmes_font_get_bit((BUFFER), (B)/8, 7-(B-(((B)/8)*8)))
-#define SET_BIT(BUFFER, B, V) _vmes_font_set_bit((BUFFER), (B)/8, 7-(B-(((B)/8)*8)), (V))
+#define GET_BIT(BUFFER, B) _vmes_font_get_bit((BUFFER), (B)/8, 7-((B)-(((B)/8)*8)))
+#define SET_BIT(BUFFER, B, V) _vmes_font_set_bit((BUFFER), (B)/8, 7-((B)-(((B)/8)*8)), (V))
 
 extern uint8_t* _vmes_gpu_buffer1;
 extern uint8_t* _vmes_gpu_buffer2;

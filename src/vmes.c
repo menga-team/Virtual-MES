@@ -7,9 +7,9 @@
 #include <SDL_timer.h>
 #include <SDL_thread.h>
 
-#include "gpu.h"
-#include "controller.h"
-#include "timer.h"
+#include <gpu.h>
+#include <controller.h>
+#include <timer.h>
 
 // mes main
 uint8_t start(void);

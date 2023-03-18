@@ -1,6 +1,6 @@
-#include "gpu.h"
-#include "gpu_internal.h"
-#include "font.h"
+#include <gpu.h>
+#include <gpu_internal.h>
+#include <font.h>
 
 // =========================== VMES ===========================
 
@@ -120,4 +120,10 @@ void gpu_send_buf(Buffer buffer, uint8_t width, uint8_t height, uint8_t posx, ui
 void gpu_display_buf(Buffer buffer, uint8_t width, uint8_t height, uint8_t posx, uint8_t posy, void *pixels) {
     gpu_send_buf(buffer, width, height, posx, posy, pixels);
     gpu_swap_buf();
+}
+
+void gpu_update_palette(const uint16_t *palette) {
+    for (int i = 0; i < 8; i++) {
+        _VMES_PALETTE_SET(_vmes_color_palette, i, _RED(palette[i]), _GREEN(palette[i]), _BLUE(palette[i]));
+    }
 }

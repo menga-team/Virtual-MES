@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <SDL_timer.h>
-#include "timer.h"
+
+#include <timer.h>
 
 uint32_t timer_get_ms() {
     return SDL_GetTicks();

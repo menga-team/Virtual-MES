@@ -24,20 +24,41 @@ int bufferbytes(uint8_t width, uint8_t height) {
 
 uint8_t start(void) {
     printf("mes_main called\n");
-
     uint32_t deltatime;
     uint32_t stop;
     uint32_t start;
 
+    // palette testing
+    uint16_t* grayscale = malloc(16);
+    grayscale[0] = _COLOR(0b000, 0b000, 0b000);
+    grayscale[1] = _COLOR(0b001, 0b001, 0b001);
+    grayscale[2] = _COLOR(0b010, 0b010, 0b010);
+    grayscale[3] = _COLOR(0b011, 0b011, 0b011);
+    grayscale[4] = _COLOR(0b100, 0b100, 0b100);
+    grayscale[5] = _COLOR(0b101, 0b101, 0b101);
+    grayscale[6] = _COLOR(0b110, 0b110, 0b110);
+    grayscale[7] = _COLOR(0b111, 0b111, 0b111);
+
+    uint16_t* standard = malloc(16);
+    standard[0] = _COLOR(0b000, 0b000, 0b000);
+    standard[1] = _COLOR(0b111, 0b111, 0b111);
+    standard[2] = _COLOR(0b111, 0b000, 0b000);
+    standard[3] = _COLOR(0b000, 0b111, 0b000);
+    standard[4] = _COLOR(0b000, 0b000, 0b111);
+    standard[5] = _COLOR(0b111, 0b111, 0b000);
+    standard[6] = _COLOR(0b111, 0b000, 0b111);
+    standard[7] = _COLOR(0b000, 0b111, 0b111);
+
+    //                     66777888    34445556    11122233
+    uint8_t rainbow[3] ={0b01110111, 0b00111001, 0b00000101};
+
+    // buffer testing
     uint8_t* rectangle = malloc(bufferbytes(SIZE, SIZE));
     memset(rectangle, 0xFF, bufferbytes(SIZE, SIZE));
-
     uint8_t rect2[6] = {0b11111111, 0b11111111, 0b11111111, 0b00000000, 0b00000000, 0b11100000};
     uint8_t* rect2ptr = (uint8_t*) &rect2;
 
-    start = timer_get_ms();
-    printf("about to start loop\n");
-
+    // controller testing
     uint8_t buttons[] = {BUTTON_UP, BUTTON_DOWN, BUTTON_LEFT, BUTTON_RIGHT};
     uint8_t colors[] = {_VMES_MAGENTA, _VMES_CYAN, _VMES_YELLOW, _VMES_GREEN};
     uint8_t arrowx[] = {    10, 10, 10, 10, 10,9, 11, 8, 12,
@@ -48,6 +69,9 @@ uint8_t start(void) {
                         20, 21, 22, 23, 24, 23, 23, 22, 22,
                         32, 32, 32, 32, 32, 33, 31, 34, 30,
                         42, 42, 42, 42, 42,41, 43, 40, 44};
+
+    start = timer_get_ms();
+    printf("about to start loop\n");
 
     while(true) {
         // clear buffer
@@ -63,10 +87,13 @@ uint8_t start(void) {
         }
 
         if (controller_get_button_by_controller_and_index(0, BUTTON_START)) gpu_reset();
+        if (controller_get_button_by_controller_and_index(0, BUTTON_A)) gpu_update_palette(grayscale);
+        if (controller_get_button_by_controller_and_index(0, BUTTON_B)) gpu_update_palette(standard);
 
         // draw stuff
         gpu_send_buf(BACK_BUFFER, SIZE, SIZE, 50, 50, rectangle);
         gpu_send_buf(BACK_BUFFER, 3, 3, 5, 5, rect2ptr);
+        gpu_send_buf(BACK_BUFFER, 8, 1, 2, 2, rainbow);
 
         // swap buffers
         gpu_swap_buf();

@@ -1,8 +1,8 @@
 #include <memory.h>
 #include <stdbool.h>
 #include "../include/mesgraphics.h"
-#include "timer.h"
-#include "gpu.h"
+#include <timer.h>
+#include <gpu.h>
 
 static void vector3f_rotate(Vector3f *vec, float theta_x, float theta_y, float theta_z) {
         // rotate about x-axis

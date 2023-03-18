@@ -1,7 +1,7 @@
 #ifndef MES_CONTROLLER_H
 #define MES_CONTROLLER_H
 
-#include "controller_internal.h"
+#include <controller_internal.h>
 
 /**
  * Gets button state by controller index and button index.
