@@ -1,7 +1,7 @@
 #include <SDL.h>
 
-#include <controller.h>
-#include <controller_internal.h>
+#include <input.h>
+#include <input_internal.h>
 
 // order:
 // 0   1     2     3      4      5       6  7
@@ -55,22 +55,23 @@ const uint8_t _vmes_controller_button_key_map[32] = {
 void _vmes_controller_update() {
     const uint8_t *_vmes_controller_keyboard_state = SDL_GetKeyboardState(NULL);
     for (int i = 0; i < 32; i++) {
-        _vmes_controller_buttons[i] = _vmes_controller_keyboard_state[_vmes_controller_button_key_map[i]];
+        if (!_vmes_controller_active[i/8])  _vmes_controller_buttons[i] = 0;
+        else _vmes_controller_buttons[i] = _vmes_controller_keyboard_state[_vmes_controller_button_key_map[i]];
     }
 }
 
-uint8_t controller_get_button_by_controller_and_index(int controller, int button) {
+uint8_t input_get_button(uint8_t controller, uint8_t button) {
     return _vmes_controller_buttons[(controller * 4) + button];
 }
 
-uint8_t* controller_get_buttons(int controller) {
+uint8_t* input_get_buttons(uint8_t controller) {
     return _vmes_controller_buttons + controller*8;
 }
 
-uint8_t controller_get_status(int controller) {
+uint8_t input_get_controller(uint8_t controller) {
     return _vmes_controller_active[controller];
 }
 
-uint8_t* controller_get_statuses(void) {
+uint8_t* input_get_controllers(void) {
     return _vmes_controller_active;
 }

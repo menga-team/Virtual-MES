@@ -1,6 +1,6 @@
 #include <memory.h>
 #include <stdbool.h>
-#include "../include/mesgraphics.h"
+#include "mesgraphics.h"
 #include <timer.h>
 #include <gpu.h>
 

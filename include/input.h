@@ -1,7 +1,7 @@
 #ifndef MES_CONTROLLER_H
 #define MES_CONTROLLER_H
 
-#include <controller_internal.h>
+#include <input_internal.h>
 
 /**
  * Gets button state by controller index and button index.
@@ -10,7 +10,7 @@
  *
  * @return: button state
  */
-uint8_t controller_get_button_by_controller_and_index(int controller, int button);
+uint8_t input_get_button(uint8_t controller, uint8_t button);
 
 /**
  * Gets array of button states by controller index
@@ -19,7 +19,7 @@ uint8_t controller_get_button_by_controller_and_index(int controller, int button
  *
  * @return: array button states
  */
-uint8_t *controller_get_buttons(int controller);
+uint8_t* input_get_buttons(uint8_t controller);
 
 /**
  * Gets controller status
@@ -28,13 +28,13 @@ uint8_t *controller_get_buttons(int controller);
  *
  * @return: status of controller
  */
-uint8_t controller_get_status(int controller);
+uint8_t input_get_controller(uint8_t controller);
 
 /**
  * Gets array of controller statuses
  *
  * @return: array of controller status
  */
-uint8_t *controller_get_statuses(void);
+uint8_t* input_get_controllers(void);
 
 #endif //MES_CONTROLLER_H

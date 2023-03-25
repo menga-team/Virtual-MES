@@ -1,0 +1,3 @@
+#define CODE_EXIT 0
+#define CODE_RESTART 1
+#define CODE_FREEZEFRAME 2

@@ -1,8 +1,9 @@
 #include <stdbool.h>
 #include <math.h>
 
+#include <mes.h>
 #include <timer.h>
-#include <controller.h>
+#include <input.h>
 #include <gpu.h>
 
 #define FPS 60
@@ -23,7 +24,7 @@ int bufferbytes(uint8_t width, uint8_t height) {
 }
 
 uint8_t start(void) {
-    printf("mes_main called\n");
+    printf("start called\n");
     uint32_t deltatime;
     uint32_t stop;
     uint32_t start;
@@ -70,25 +71,47 @@ uint8_t start(void) {
                         32, 32, 32, 32, 32, 33, 31, 34, 30,
                         42, 42, 42, 42, 42,41, 43, 40, 44};
 
+    uint8_t* player = malloc(39);
+    memset(player, 0xFF, 39);
+    uint8_t playerx = 0;
+    uint8_t playery = 0;
+
     start = timer_get_ms();
     printf("about to start loop\n");
 
     while(true) {
+
+        // test exit codes
+        if (input_get_button(0, BUTTON_START)) return CODE_EXIT;
+        else if (input_get_button(0, BUTTON_SELECT)) { timer_block_ms(1000); return CODE_RESTART;};
+
         // clear buffer
         gpu_blank(BACK_BUFFER, 0);
 
-        // render arrows
+        // test controller
         for (int i = 0; i < 4; i++) {
-            if (controller_get_button_by_controller_and_index(0, buttons[i])) {
+            if (input_get_button(0, buttons[i])) {
                 for (int j = 0; j < 9; j++) {
                     _vmes_gpu_setpixel(_vmes_gpu_back_buffer(), arrowx[9*i + j], arrowy[9*i + j], colors[i]);
                 }
             }
         }
 
-        if (controller_get_button_by_controller_and_index(0, BUTTON_START)) gpu_reset();
-        if (controller_get_button_by_controller_and_index(0, BUTTON_A)) gpu_update_palette(grayscale);
-        if (controller_get_button_by_controller_and_index(0, BUTTON_B)) gpu_update_palette(standard);
+        // test gpu reset
+        if (input_get_button(0, BUTTON_A) && input_get_button(0, BUTTON_B)) gpu_reset();
+
+        // test palette change
+        if (input_get_button(0, BUTTON_A)) gpu_update_palette(grayscale);
+        if (input_get_button(0, BUTTON_B)) gpu_update_palette(standard);
+
+        // player movement
+        if (input_get_button(0, BUTTON_UP)) {if (playery > 0) playery--;}
+        else if (input_get_button(0, BUTTON_DOWN)) {if (playery < HEIGHT-10) playery++;}
+        else if (input_get_button(0, BUTTON_LEFT)) {if (playerx > 0) playerx--;}
+        else if (input_get_button(0, BUTTON_RIGHT)) {if (playerx < WIDTH-10) playerx++;}
+
+        // player rendering
+        gpu_send_buf(BACK_BUFFER, 10, 10, playerx, playery, player);
 
         // draw stuff
         gpu_send_buf(BACK_BUFFER, SIZE, SIZE, 50, 50, rectangle);

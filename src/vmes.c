@@ -7,12 +7,21 @@
 #include <SDL_timer.h>
 #include <SDL_thread.h>
 
+#include <mes.h>
 #include <gpu.h>
-#include <controller.h>
+#include <input.h>
 #include <timer.h>
+
+#define _VMES_RUNNING 255
+uint8_t exit_code = _VMES_RUNNING;
 
 // mes main
 uint8_t start(void);
+
+// mes main wrapper
+void thread(void) {
+    exit_code = start();
+}
 
 // vmes main
 int main() {
@@ -50,6 +59,7 @@ int main() {
 
     // event handling
     bool quit = false;
+    bool freeze = false;
     SDL_Event event;
 
     // timing
@@ -57,54 +67,66 @@ int main() {
     uint32_t stop_time;
     uint32_t start_time;
 
+    // controllers
+    _vmes_controller_active[0] = 1;
+
     // game thread
-    SDL_Thread* thread = SDL_CreateThread((SDL_ThreadFunction) start, "MES_main", NULL);
+    SDL_Thread* sdlthread = SDL_CreateThread((SDL_ThreadFunction) thread, "MES_main", NULL);
 
     // game loop
     while (!quit) {
 
+        if (exit_code == CODE_EXIT) break;
+        else if (exit_code == CODE_RESTART)  {
+            exit_code = _VMES_RUNNING;
+            pthread_kill((pthread_t) SDL_GetThreadID(sdlthread), 0);
+            sdlthread = SDL_CreateThread((SDL_ThreadFunction) thread, "MES_main", NULL);
+        }
+
         // event handling
         while (SDL_PollEvent(&event)) {
-            switch (event.type) {
-                case SDL_QUIT:
-                    quit = true;
-                    break;
-                case SDL_KEYDOWN:
-                    switch (event.key.keysym.sym) {
-                        case SDLK_1: _vmes_controller_active[0] = !_vmes_controller_active[0]; break;
-                        case SDLK_2: _vmes_controller_active[1] = !_vmes_controller_active[1]; break;
-                        case SDLK_3: _vmes_controller_active[2] = !_vmes_controller_active[2]; break;
-                        case SDLK_4: _vmes_controller_active[3] = !_vmes_controller_active[3]; break;
+            if (event.type == SDL_QUIT) {quit = true; continue;}
+            else if (event.type == SDL_KEYDOWN) {
+                switch (event.key.keysym.sym) {
+                    case SDLK_1: _vmes_controller_active[0] = !_vmes_controller_active[0]; break;
+                    case SDLK_2: _vmes_controller_active[1] = !_vmes_controller_active[1]; break;
+                    case SDLK_3: _vmes_controller_active[2] = !_vmes_controller_active[2]; break;
+                    case SDLK_4: _vmes_controller_active[3] = !_vmes_controller_active[3]; break;
+                }
+            }
+        }
+
+        if (!freeze) {
+            // update controllers
+            _vmes_controller_update();
+
+            // fake reset gpu
+            if (reset_switch) {
+                dont_render = true;
+                dont_render_time = 0;
+                reset_switch = false;
+                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+                SDL_RenderFillRect(renderer, &fullscreen);
+                SDL_RenderPresent(renderer);
+            }
+
+            // render front buffer
+                if (!dont_render) {
+                    if (buffer_switch) texture = SDL_CreateTextureFromSurface(renderer, surface1);
+                    else texture = SDL_CreateTextureFromSurface(renderer, surface2);
+                    SDL_RenderCopy(renderer, texture, NULL, NULL);
+                    SDL_RenderPresent(renderer);
+                    SDL_DestroyTexture(texture);
+                } else {
+                    dont_render_time += deltatime;
+                    if (dont_render_time > 500) {
+                        dont_render = false;
                     }
-                    break;
-            }
+                }
         }
 
-        // update controllers
-        _vmes_controller_update();
+        if (exit_code == CODE_FREEZEFRAME) freeze = true;
 
-        // render current front_buffer
-        if (reset_switch) {
-            dont_render = true;
-            dont_render_time = 0;
-            reset_switch = false;
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-            SDL_RenderFillRect(renderer, &fullscreen);
-            SDL_RenderPresent(renderer);
-        }
-
-        if (!dont_render) {
-            if (buffer_switch) texture = SDL_CreateTextureFromSurface(renderer, surface1);
-            else texture = SDL_CreateTextureFromSurface(renderer, surface2);
-            SDL_RenderCopy(renderer, texture, NULL, NULL);
-            SDL_RenderPresent(renderer);
-            SDL_DestroyTexture(texture);
-        } else {
-            dont_render_time += deltatime;
-            if (dont_render_time > 500) {
-                dont_render = false;
-            }
-        }
         // timing
         stop_time = timer_get_ms();
         deltatime = stop_time - start_time;
@@ -115,7 +137,7 @@ int main() {
     }
 
     // cleanup
-    pthread_kill((pthread_t) SDL_GetThreadID(thread), 0);
+    // pthread_kill((pthread_t) SDL_GetThreadID(sdlthread), 0);
     SDL_FreeSurface(surface1);
     SDL_FreeSurface(surface2);
     free(buffer1);

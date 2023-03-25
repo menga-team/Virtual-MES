@@ -1,5 +1,5 @@
-#ifndef VMES_CONTROLLER_INTERNAL_H
-#define VMES_CONTROLLER_INTERNAL_H
+#ifndef VMES_INPUT_INTERNAL_H
+#define VMES_INPUT_INTERNAL_H
 
 #include <stdint.h>
 
@@ -20,4 +20,4 @@ extern const uint8_t _vmes_controller_button_key_map[32];
 
 void _vmes_controller_update();
 
-#endif //VMES_CONTROLLER_INTERNAL_H
+#endif //VMES_INPUT_INTERNAL_H

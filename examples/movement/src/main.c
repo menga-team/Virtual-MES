@@ -1,10 +1,10 @@
 #include <stdbool.h>
 
 #include <timer.h>
-#include <controller.h>
+#include <input.h>
 #include <gpu.h>
 
-#include "../include/mesgraphics.h"
+#include "mesgraphics.h"
 
 #define FPS 60
 #define FRAMETIME ((1.0/FPS)*1000)
@@ -24,10 +24,10 @@ uint8_t start(void) {
     while(true) {
 
         // player movement
-        if (controller_get_button_by_controller_and_index(0, BUTTON_UP)) {if (playery > 0) playery--;}
-        else if (controller_get_button_by_controller_and_index(0, BUTTON_DOWN)) {if (playery < HEIGHT-PLAYERSIZE) playery++;}
-        else if (controller_get_button_by_controller_and_index(0, BUTTON_LEFT)) {if (playerx > 0) playerx--;}
-        else if (controller_get_button_by_controller_and_index(0, BUTTON_RIGHT)) {if (playerx < WIDTH-PLAYERSIZE) playerx++;}
+        if (input_get_button(0, BUTTON_UP)) {if (playery > 0) playery--;}
+        else if (input_get_button(0, BUTTON_DOWN)) {if (playery < HEIGHT-PLAYERSIZE) playery++;}
+        else if (input_get_button(0, BUTTON_LEFT)) {if (playerx > 0) playerx--;}
+        else if (input_get_button(0, BUTTON_RIGHT)) {if (playerx < WIDTH-PLAYERSIZE) playerx++;}
 
         // player rendering
         gpu_blank(BACK_BUFFER, 0);
