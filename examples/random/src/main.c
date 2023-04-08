@@ -6,7 +6,6 @@
 
 uint8_t start(void) {
     rng_init();
-    char* text = malloc(27);
     while(true) {
 	gpu_blank(FRONT_BUFFER, 0);
 	for(uint8_t y = 0; y < 120; y += 8) {
