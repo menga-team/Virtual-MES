@@ -109,21 +109,21 @@ int main() {
                 SDL_RenderFillRect(renderer, &fullscreen);
                 SDL_RenderPresent(renderer);
             }
-
-            // render front buffer
-                if (!dont_render) {
-                    if (buffer_switch) texture = SDL_CreateTextureFromSurface(renderer, surface1);
-                    else texture = SDL_CreateTextureFromSurface(renderer, surface2);
-                    SDL_RenderCopy(renderer, texture, NULL, NULL);
-                    SDL_RenderPresent(renderer);
-                    SDL_DestroyTexture(texture);
-                } else {
-                    dont_render_time += deltatime;
-                    if (dont_render_time > 500) {
-                        dont_render = false;
-                    }
-                }
         }
+
+	// render front buffer
+	if (!dont_render) {
+	    if (buffer_switch) texture = SDL_CreateTextureFromSurface(renderer, surface1);
+	    else texture = SDL_CreateTextureFromSurface(renderer, surface2);
+	    SDL_RenderCopy(renderer, texture, NULL, NULL);
+	    SDL_RenderPresent(renderer);
+	    SDL_DestroyTexture(texture);
+	} else {
+	    dont_render_time += deltatime;
+	    if (dont_render_time > 500) {
+		dont_render = false;
+	    }
+	}
 
         if (exit_code == CODE_FREEZEFRAME) freeze = true;
 
