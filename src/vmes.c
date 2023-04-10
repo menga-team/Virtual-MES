@@ -13,14 +13,14 @@
 #include <timer.h>
 
 #define _VMES_RUNNING 255
-uint8_t exit_code = _VMES_RUNNING;
+uint8_t _vmes_exit_code = _VMES_RUNNING;
 
 // mes main
 uint8_t start(void);
 
 // mes main wrapper
 void thread(void) {
-    exit_code = start();
+    _vmes_exit_code = start();
 }
 
 // vmes main
@@ -76,9 +76,9 @@ int main() {
     // game loop
     while (!quit) {
 
-        if (exit_code == CODE_EXIT) break;
-        else if (exit_code == CODE_RESTART)  {
-            exit_code = _VMES_RUNNING;
+        if (_vmes_exit_code == CODE_EXIT) break;
+        else if (_vmes_exit_code == CODE_RESTART)  {
+            _vmes_exit_code = _VMES_RUNNING;
             pthread_kill((pthread_t) SDL_GetThreadID(sdlthread), 0);
             sdlthread = SDL_CreateThread((SDL_ThreadFunction) thread, "MES_main", NULL);
         }
@@ -111,21 +111,21 @@ int main() {
             }
         }
 
-	// render front buffer
-	if (!dont_render) {
-	    if (buffer_switch) texture = SDL_CreateTextureFromSurface(renderer, surface1);
-	    else texture = SDL_CreateTextureFromSurface(renderer, surface2);
-	    SDL_RenderCopy(renderer, texture, NULL, NULL);
-	    SDL_RenderPresent(renderer);
-	    SDL_DestroyTexture(texture);
-	} else {
-	    dont_render_time += deltatime;
-	    if (dont_render_time > 500) {
-		dont_render = false;
-	    }
-	}
+        // render front buffer
+        if (!dont_render) {
+            if (buffer_switch) texture = SDL_CreateTextureFromSurface(renderer, surface1);
+            else texture = SDL_CreateTextureFromSurface(renderer, surface2);
+            SDL_RenderCopy(renderer, texture, NULL, NULL);
+            SDL_RenderPresent(renderer);
+            SDL_DestroyTexture(texture);
+        } else {
+            dont_render_time += deltatime;
+            if (dont_render_time > 500) {
+            dont_render = false;
+            }
+        }
 
-        if (exit_code == CODE_FREEZEFRAME) freeze = true;
+        if (_vmes_exit_code == CODE_FREEZEFRAME) freeze = true;
 
         // timing
         stop_time = timer_get_ms();
