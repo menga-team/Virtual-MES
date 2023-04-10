@@ -1,27 +1,12 @@
 # Virtual-MES
-An Emulator of the Menga Entertainment System.
+vmes for short, is a simulation of the Menga Entertainment System.
 
-## Drivers:
+## Installation
+We recommend using the [project template](https://github.com/menga-team/MES-Project) alongside with
+[mvm](https://github.com/menga-team/mes-version-manager) to integrate simulation into your game
+developement workflow. If you want to work with vmes specifically, check out the CMake Setup by trying
+out one of the [examples](examples). This should work with the CMake integration of your preferred IDE too.
 
-Headers are copied from [menga-team/MES](https://github.com/menga-team/MES)
-to ensure feature parity.
-
-Following functions are available:
-
-### Controller:
-* `controller_get_button_by_controller_and_index`
-* `controller_get_buttons`
-* `controller_get_status`
-* `controller_get_statuses`
-
-### GPU:
-* [TODO] `gpu_print_text`
-* [TODO] `gpu_reset`
-* `gpu_blank`
-* `gpu_swap_buf`
-* `gpu_send_buf`
-* [TODO] `gpu_display_buf`
-
-### Timer:
-* `timer_get_ms`
-* `timer_block_ms`
+## Usage
+For a tutorial on MES developement or a detailed explanation on MES drivers, check out the
+[wiki](https://github.com/menga-team/MES/wiki).
