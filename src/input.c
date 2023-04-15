@@ -73,7 +73,7 @@ bool input_is_available(uint8_t controller) {
     return _vmes_controller_active[controller];
 }
 
-bool* input_get_avalability(void) {
+bool* input_get_availability(void) {
     return _vmes_controller_active;
 }
 

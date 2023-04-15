@@ -61,7 +61,7 @@ bool input_is_available(uint8_t controller);
  *
  * @return: array of controller status
  */
-bool* input_get_avalability(void);
+bool* input_get_availability(void);
 
 
 /**
