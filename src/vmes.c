@@ -54,8 +54,9 @@ int main() {
     bool buffer_switch = true;
     bool reset_switch = false;
     bool dont_render = false;
+    bool block_frame = false;
     uint16_t dont_render_time = 0;
-    _vmes_gpu_init(buffer1, buffer2, &buffer_switch, &reset_switch);
+    _vmes_gpu_init(buffer1, buffer2, &buffer_switch, &reset_switch, &block_frame);
 
     // event handling
     bool quit = false;
@@ -110,6 +111,9 @@ int main() {
                 SDL_RenderPresent(renderer);
             }
         }
+
+        // release gpu_block_frame
+        block_frame = false;
 
         // render front buffer
         if (!dont_render) {

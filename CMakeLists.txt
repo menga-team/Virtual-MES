@@ -31,3 +31,8 @@ file(GLOB SOURCES_RANDOM "examples/random/src/*.c")
 add_executable(random ${SOURCES_RANDOM} ${SOURCES_VMES})
 target_link_libraries(random ${SDL2_LIBRARIES})
 target_link_libraries(random m)
+
+file(GLOB SOURCES_TIMING "examples/timing/src/*.c")
+add_executable(timing ${SOURCES_TIMING} ${SOURCES_VMES})
+target_link_libraries(timing ${SDL2_LIBRARIES})
+target_link_libraries(timing m)

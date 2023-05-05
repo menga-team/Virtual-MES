@@ -41,7 +41,7 @@
 
 // sdl surface
 #define _VMES_WINDOW_SCALE 5 // mes buffer pixel to screen pixel ratio
-#define _VMES_FPS 480
+#define _VMES_FPS 60
 #define _VMES_FRAMETIME (1.0/_VMES_FPS)
 #define _VMES_BPP 32
 #define _VMES_BUFFERSIZE WIDTH*HEIGHT*(_VMES_BPP/8)
@@ -60,6 +60,7 @@ extern uint8_t* _vmes_gpu_buffer1;
 extern uint8_t* _vmes_gpu_buffer2;
 extern bool* _vmes_gpu_buffer_switch;
 extern bool* _vmes_gpu_reset;
+extern bool* _vmes_gpu_block_frame;
 extern uint8_t* _vmes_color_palette;
 uint8_t* _vmes_gpu_front_buffer();
 uint8_t* _vmes_gpu_back_buffer();
@@ -72,7 +73,7 @@ void _vmes_font_set_bit(uint8_t* buffer, uint32_t byte, uint8_t bit, uint8_t val
 uint8_t* _vmes_get_sdl_buffer(Buffer buffer);
 
 /// initialize gpu virtualization
-void _vmes_gpu_init(uint8_t* sdl_buffer1, uint8_t* sdl_buffer2, bool* buffer_switch, bool* reset_switch);
+void _vmes_gpu_init(uint8_t* sdl_buffer1, uint8_t* sdl_buffer2, bool* buffer_switch, bool* reset_switch, bool* block_frame);
 
 /// set pixel of 32 bpp sdl buffer
 void _vmes_gpu_setpixel(uint8_t* sdl_buffer, uint8_t x, uint8_t y, uint8_t color);

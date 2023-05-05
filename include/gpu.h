@@ -25,4 +25,10 @@ void gpu_display_buf(Buffer buffer, uint8_t width, uint8_t height, uint8_t posx,
 
 void gpu_update_palette(const uint16_t *palette);
 
+void gpu_block_frame();
+
+void gpu_block_frames(uint32_t frames);
+
+void gpu_block_ack();
+
 #endif //MES_GPU_H
