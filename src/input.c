@@ -62,7 +62,7 @@ void _vmes_controller_update() {
 }
 
 bool input_get_button(uint8_t controller, uint8_t button) {
-    return _vmes_controller_buttons[(controller * 4) + button];
+    return _vmes_controller_buttons[(controller * 8) + button];
 }
 
 bool* input_get_buttons(uint8_t controller) {
