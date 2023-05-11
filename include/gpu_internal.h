@@ -42,7 +42,7 @@
 // sdl surface
 #define _VMES_WINDOW_SCALE 5 // mes buffer pixel to screen pixel ratio
 #define _VMES_FPS 60
-#define _VMES_FRAMETIME (1.0/_VMES_FPS)
+#define _VMES_FRAMETIME (1000/_VMES_FPS)
 #define _VMES_BPP 32
 #define _VMES_BUFFERSIZE WIDTH*HEIGHT*(_VMES_BPP/8)
 #define RMASK 0xff000000

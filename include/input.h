@@ -1,5 +1,5 @@
-#ifndef MES_CONTROLLER_H
-#define MES_CONTROLLER_H
+#ifndef MES_INPUT_H
+#define MES_INPUT_H
 
 #include <input_internal.h>
 #include <font.h>
@@ -69,4 +69,4 @@ bool* input_get_availability(void);
  */
 void input_change_freq(uint16_t freq);
 
-#endif //MES_CONTROLLER_H
+#endif //MES_INPUT_H
