@@ -41,3 +41,8 @@ file(GLOB SOURCES_DATA "examples/data/src/*.c")
 add_executable(data ${SOURCES_DATA} ${SOURCES_VMES})
 target_link_libraries(data ${SDL2_LIBRARIES})
 target_link_libraries(data m)
+
+file(GLOB SOURCES_CONTROLLER "examples/controller/src/*.c")
+add_executable(controller ${SOURCES_CONTROLLER} ${SOURCES_VMES})
+target_link_libraries(controller ${SDL2_LIBRARIES})
+target_link_libraries(controller m)
